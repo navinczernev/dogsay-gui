@@ -1,31 +1,24 @@
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, Box as GtkBox, Image, Label, Orientation};
+
+fn build_ui(app: &gtk::Application) {
+    let builder = gtk::Builder::from_file("./layout/dog.xml");
+
+    if let Some(window) = builder.object::<gtk::Window>("applicationWindow1") {
+        window.set_application(Some(app));
+        window.show_all();
+    } else {
+        eprintln!("Failed to get window with an id of 'applicationWindow1'");
+        std::process::exit(1);
+    }
+}
 
 fn main() {
-    let app = Application::new(
+    let app = gtk::Application::new(
         Some("com.navinczernev.dogsay-gui"),
         Default::default()
     );
 
-    app.connect_activate(|app| {
-        let window = ApplicationWindow::new(app);
-        window.set_title("Dogsay");
-        window.set_default_size(500, 590);
-
-        let layout_box = GtkBox::new(Orientation::Vertical, 0);
-
-        let label = Label::new(
-            Some("Woof!\n     \\\n       \\")
-        );
-        layout_box.add(&label);
-        let dog_image = Image::from_file(
-            "./images/dog.png"
-        );
-        layout_box.add(&dog_image);
-
-        window.add(&layout_box);
-        window.show_all();
-    });
+    app.connect_activate(build_ui);
 
     app.run();
 }
